@@ -29,16 +29,16 @@ model_name = 'keras__trained_model.h5'
 #### Load matlab 3 dimensional array into Jupiter notebook ####
 
 ## type 5,10,15 & un/trimmed correspondingly into image_<type_here>per_<type_here> to choose data ## 
-mat_contents = sio.loadmat('hyperspectral_images/trimmed_data/image_5per_trimmed.mat') #loads .mat file
+mat_contents = sio.loadmat('hyperspectral_images/image_5per_trimmed.mat') #loads .mat file
 ## type 5,10,15 & un/trimmed correspondingly into X<type_here>_<type_here> to choose data ##
 image_data5=mat_contents['X5_trimmed'] #extracts data from .mat file
 print ('5% water image shape', image_data5.shape)
 
-mat_contents = sio.loadmat('hyperspectral_images/trimmed_data/image_10per_trimmed.mat') #loads .mat file
+mat_contents = sio.loadmat('hyperspectral_images/image_10per_trimmed.mat') #loads .mat file
 image_data10=mat_contents['X10_trimmed'] #extracts data from .mat file
 print ('10% water image shape', image_data10.shape)
 
-mat_contents = sio.loadmat('hyperspectral_images/trimmed_data/image_15per_trimmed.mat') #loads .mat file
+mat_contents = sio.loadmat('hyperspectral_images/image_15per_trimmed.mat') #loads .mat file
 image_data15=mat_contents['X15_trimmed'] #extracts data from .mat file
 print ('15% water image shape', image_data15.shape)
 
