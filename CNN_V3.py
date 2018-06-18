@@ -142,7 +142,7 @@ plt.plot(cnn.history['acc'],'r')
 
 plt.plot(cnn.history['val_acc'],'g')
 
-plt.xticks(np.arange(0, epochs+1, 10))
+plt.xticks(np.arange(0, epochs+1, 25))
 
 plt.rcParams['figure.figsize'] = (8, 6)
 
@@ -161,7 +161,7 @@ plt.plot(cnn.history['loss'],'r')
 
 plt.plot(cnn.history['val_loss'],'g')
 
-plt.xticks(np.arange(0, epochs+1, 10))
+plt.xticks(np.arange(0, epochs+1, 25))
 
 plt.rcParams['figure.figsize'] = (8, 6)
 
