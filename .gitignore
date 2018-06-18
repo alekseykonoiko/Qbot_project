@@ -1,2 +1,3 @@
 hyperspectral_images/
 training_data.npz
+.vscode/
