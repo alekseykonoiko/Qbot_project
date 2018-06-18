@@ -1,4 +1,3 @@
-# this is a testt 
 #%matplotlib qt
 #%matplotlib notebook
 #%matplotlib inlinen
@@ -190,4 +189,3 @@ print('Test loss:', scores[0])
 
 print('Test accuracy:', scores[1])
 
-##
