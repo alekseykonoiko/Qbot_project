@@ -26,7 +26,7 @@ from keras.preprocessing.image import ImageDataGenerator
 save_dir = os.path.join(os.getcwd(), 'saved_models')
 model_name = 'keras__trained_model.h5'
 
-#### Load matlab 3 dimensional array into Jupiter notebook ####
+#### Load matlab 3 dimensional array into python ####
 
 ## type 5,10,15 & un/trimmed correspondingly into image_<type_here>per_<type_here> to choose data ## 
 mat_contents = sio.loadmat('hyperspectral_images/image_5per_trimmed.mat') #loads .mat file
@@ -42,25 +42,15 @@ mat_contents = sio.loadmat('hyperspectral_images/image_15per_trimmed.mat') #load
 image_data15=mat_contents['X15_trimmed'] #extracts data from .mat file
 print ('15% water image shape', image_data15.shape)
 
-#### To check data validity visually ####
-from spectral import *
-view = imshow(image_data5)
-title_obj = plt.title('5% water image')
-
-view = imshow(image_data10)
-title_obj = plt.title('10% water image')
 ## Filter for saturated pixels
 for i in range(0, 256):
     for j in range(0, 256):
         for k in range(0, 288):
-            pixel_value = image_data10[j, i, k]
-            if pixel_value > 70: # Threhold value for saturated pixel from 0 to 1000
-                image_data10[j, i, k] = image_data10[j-1, i-1, k]
-view = imshow(image_data10)
-title_obj = plt.title('10% water image (filtered)')
-
-view = imshow(image_data15)
-title_obj = plt.title('15% water image')
+            if image_data10[j, i, k] > 100: # Threhold value for saturated pixel from 0 to 1000
+                for k in range(0, 288):
+                    image_data10[j, i, k] = image_data10[j, i-1, k]
+                break
+        continue                   
 
 #### Segmentation of picture into multiple pictures and arrangment into cifar10 dataset style ####
 image_data_segments = list()
@@ -137,7 +127,7 @@ print ('y_test shape:', y_test.shape)
 #print ('Labels array:', y_train)
 
 ## hyperparameters section 
-batch_size = 64
+batch_size = 32
 num_classes = 3
 epochs = 200
 
@@ -169,27 +159,33 @@ initializer = keras.initializers.Orthogonal(gain=2, seed=True)
 
 input1 = Input(shape=(32,32,288))
 
-x = Conv2D(64, kernel_size=1, activation='relu', kernel_initializer=initializer)(input1)
+x = Conv2D(64, kernel_size=5, padding='same', activation='relu', kernel_initializer=initializer)(input1)
 #x = Conv2D(288, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
 #x = AveragePooling2D(pool_size=(2, 2))(x)
-#x = Dropout(0.2)(x)
+x = Dropout(0.2)(x)
 
-#x = Conv2D(288, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = Conv2D(32, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
+x = Conv2D(64, kernel_size=5, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
 x = AveragePooling2D(pool_size=(2, 2))(x)
-#x = Dropout(0.2)(x)
+x = Dropout(0.2)(x)
+#x = Conv2D(288, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
+x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
+x = AveragePooling2D(pool_size=(2, 2))(x)
+x = Dropout(0.2)(x)
 
-x = Conv2D(32, kernel_size=5, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
+x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
 #x = Conv2D(32, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
 x = AveragePooling2D(pool_size=(2, 2))(x)
-#x = Dropout(0.2)(x)
+x = Dropout(0.2)(x)
 
 # x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
 # x = AveragePooling2D(pool_size=(2, 2))(x)
 # x = Dropout(0.2)(x)
 
 x = Flatten()(x)
-x = Dense(32, activation='relu', kernel_initializer=initializer)(x)
+x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
+x = Dropout(0.2)(x)
+x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
+x = Dropout(0.2)(x)
 output = Dense(num_classes, activation='softmax')(x)
 model = Model(inputs=input1, outputs=output)
 
@@ -220,7 +216,7 @@ x_test /= 100
 print(model.summary()) # summarize layers
 #plot_model(model, to_file='Pictures/convolutional_neural_network.png') # plot graph of CNN structure
 
-np.random.seed(seed)
+#np.random.seed(seed)
 cnn = model.fit(x_train, y_train,
           
               batch_size=batch_size,

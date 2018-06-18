@@ -1,1 +1,2 @@
-hyperspectral_images/original_data/
+hyperspectral_images/
+training_data.npz
