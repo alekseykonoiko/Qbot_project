@@ -1,7 +1,7 @@
 # this is a testt 
 #%matplotlib qt
 #%matplotlib notebook
-#%matplotlib inline
+#%matplotlib inlinen
 import os
 #os.environ['CUDA_VISIBLE_DEVICES'] = '-1' #Comment to Enable GPU
 import numpy as np
