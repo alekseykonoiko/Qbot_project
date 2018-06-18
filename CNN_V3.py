@@ -1,7 +1,6 @@
-# this is a testing 123
 #%matplotlib qt
 #%matplotlib notebook
-#%matplotlib inline
+#%matplotlib inlinen
 import os
 #os.environ['CUDA_VISIBLE_DEVICES'] = '-1' #Comment to Enable GPU
 import numpy as np
@@ -190,4 +189,3 @@ print('Test loss:', scores[0])
 
 print('Test accuracy:', scores[1])
 
-##
