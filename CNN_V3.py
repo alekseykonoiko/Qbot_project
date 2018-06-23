@@ -27,7 +27,7 @@ model_name = 'keras__trained_model.h5'
 
 #### Load Data ####
 
-npzfile = np.load('training_data.npz')
+npzfile = np.load('CNNs/training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
 y_train = npzfile['y_train']
@@ -61,45 +61,46 @@ initializer = keras.initializers.Orthogonal(gain=2, seed=True)
 #initializer = keras.initializers.he_uniform(seed=None)
 
 
-input1 = Input(shape=(32,32,288))
+input1 = Input(shape=(32,32,288,1))
 
-spatial = Conv3D(128, kernel_size=(288, 3, 3), padding='same', activation='relu', kernel_initializer=initializer)(input1)
-spectral = Conv3D(128, kernel_size=(288, 3, 3), padding='same', activation='relu', kernel_initializer=initializer)(input1)
+spatial = Conv3D(128, kernel_size=(3, 3, 144), padding='same', activation='relu')(input1)
+spectral = Conv3D(128, kernel_size=(1, 1, 144), activation='relu')(input1)
 
-concat = Concatenate([spatial, spectral], axis=-1)
+# concat = merge([UpSampling3D(size=(288, 1, 1))(spatial), spectral], mode='concat', concat_axis=1)
+concat = concatenate([spatial, spectral], axis=3)
 
-l1 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(concat)
+l1 = Conv3D(128, kernel_size=(1, 1, 288), padding='same' ,activation='relu', kernel_initializer=initializer)(concat)
 noise1 = GaussianNoise(0.01)(l1)
-l2 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise1)
+l2 = Conv3D(128, kernel_size=(1, 1, 288), padding='same' ,activation='relu', kernel_initializer=initializer)(noise1)
 noise2 = GaussianNoise(0.01)(l2)
-l3 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise2)
+l3 = Conv3D(128, kernel_size=(1, 1, 144), padding='same' ,activation='relu', kernel_initializer=initializer)(noise2)
 noise3 = GaussianNoise(0.005)(l3)
 add1 = add([l1, noise3])
 
-l4 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(add1)
+l4 = Conv3D(128, kernel_size=(1, 1, 72), padding='same' ,activation='relu', kernel_initializer=initializer)(add1)
 noise4 = GaussianNoise(0.005)(l4)
-l5 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise4)
+l5 = Conv3D(128, kernel_size=(1, 1, 36), padding='same' ,activation='relu', kernel_initializer=initializer)(noise4)
 noise5 = GaussianNoise(0.005)(l5)
-l6 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise5)
+l6 = Conv3D(128, kernel_size=(1, 1, 18), padding='same' ,activation='relu', kernel_initializer=initializer)(noise5)
 noise6 = GaussianNoise(0.005)(l6)
 add2 = add([l4, noise6])
 
-l7 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(add2)
+l7 = Conv3D(128, kernel_size=(1, 1, 9), padding='same' ,activation='relu', kernel_initializer=initializer)(add2)
 noise7 = GaussianNoise(0.005)(l7)
-drop1 = Dropout(0.2)(noise7)
-l8 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(drop1)
+drop1 = SpatialDropout3D(0.2)(noise7)
+l8 = Conv3D(128, kernel_size=(1, 1, 9), padding='same' ,activation='relu', kernel_initializer=initializer)(drop1)
 noise8 = GaussianNoise(0.005)(l8)
-drop2 = Dropout(0.2)(noise8)
-l9 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(drop2)
+drop2 = SpatialDropout3D(0.2)(noise8)
+l9 = Conv3D(128, kernel_size=(1, 1, 3), padding='same' ,activation='relu', kernel_initializer=initializer)(drop2)
 noise9 =  GaussianNoise(0.01)(l9)
 
 
-flat = Flatten()(noise9)
+# flat = Flatten()(noise9)
 # x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
 # x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
-output = Dense(num_classes, activation='softmax')(flat)
+output = Dense(num_classes, activation='softmax')(noise9)
 model = Model(inputs=input1, outputs=output)
 
 ## initiate RMSprop optimizer
@@ -127,7 +128,7 @@ x_train /= 100
 x_test /= 100
 
 print(model.summary()) # summarize layers
-#plot_model(model, to_file='Pictures/convolutional_neural_network.png') # plot graph of CNN structure
+plot_model(model, to_file='convolutional_neural_network.png') # plot graph of CNN structure
 
 #np.random.seed(seed)
 cnn = model.fit(x_train, y_train,
