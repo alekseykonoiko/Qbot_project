@@ -95,12 +95,12 @@ l9 = Conv3D(128, kernel_size=(1, 1, 3), padding='same' ,activation='relu', kerne
 noise9 =  GaussianNoise(0.01)(l9)
 
 
-# flat = Flatten()(noise9)
+flat = Flatten()(noise9)
 # x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
 # x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
-output = Dense(num_classes, activation='softmax')(noise9)
+output = Dense(num_classes, activation='softmax')(flat)
 model = Model(inputs=input1, outputs=output)
 
 ## initiate RMSprop optimizer
