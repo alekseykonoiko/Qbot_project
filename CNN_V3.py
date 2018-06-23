@@ -40,7 +40,7 @@ print (y_test.shape)
 
 
 #### Hyperparameters ####
-batch_size = 32
+batch_size = 10
 num_classes = 6
 epochs = 200
 
@@ -63,39 +63,48 @@ initializer = keras.initializers.Orthogonal(gain=2, seed=True)
 
 input1 = Input(shape=(32,32,288))
 
-x = Conv2D(64, kernel_size=5, padding='same', activation='relu', kernel_initializer=initializer)(input1)
-#x = Conv2D(288, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-#x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+spatial = Conv3D(128, kernel_size=(288, 3, 3), padding='same', activation='relu', kernel_initializer=initializer)(input1)
+spectral = Conv3D(128, kernel_size=(288, 3, 3), padding='same', activation='relu', kernel_initializer=initializer)(input1)
 
-x = Conv2D(64, kernel_size=5, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
-#x = Conv2D(288, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+concat = Concatenate([spatial, spectral], axis=-1)
 
-x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-#x = Conv2D(32, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+l1 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(concat)
+noise1 = GaussianNoise(0.01)(l1)
+l2 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise1)
+noise2 = GaussianNoise(0.01)(l2)
+l3 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise2)
+noise3 = GaussianNoise(0.005)(l3)
+add1 = add([l1, noise3])
 
-# x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-# x = AveragePooling2D(pool_size=(2, 2))(x)
+l4 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(add1)
+noise4 = GaussianNoise(0.005)(l4)
+l5 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise4)
+noise5 = GaussianNoise(0.005)(l5)
+l6 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(noise5)
+noise6 = GaussianNoise(0.005)(l6)
+add2 = add([l4, noise6])
+
+l7 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(add2)
+noise7 = GaussianNoise(0.005)(l7)
+drop1 = Dropout(0.2)(noise7)
+l8 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(drop1)
+noise8 = GaussianNoise(0.005)(l8)
+drop2 = Dropout(0.2)(noise8)
+l9 = Conv2D(128, kernel_size=1, padding='same' ,activation='relu', kernel_initializer=initializer)(drop2)
+noise9 =  GaussianNoise(0.01)(l9)
+
+
+flat = Flatten()(noise9)
+# x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
-
-x = Flatten()(x)
-x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
-x = Dropout(0.2)(x)
-x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
-x = Dropout(0.2)(x)
-output = Dense(num_classes, activation='softmax')(x)
+# x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
+# x = Dropout(0.2)(x)
+output = Dense(num_classes, activation='softmax')(flat)
 model = Model(inputs=input1, outputs=output)
 
 ## initiate RMSprop optimizer
 
-opt = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=1e-4)
+opt = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=5e-4)
 
 opt1 = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0, amsgrad=False)
 
