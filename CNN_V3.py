@@ -25,7 +25,7 @@ from keras.preprocessing.image import ImageDataGenerator
 save_dir = os.path.join(os.getcwd(), 'saved_models')
 model_name = 'keras__trained_model.h5'
 
-#### Load Data1 ####
+#### Load Data ####
 
 npzfile = np.load('training_data.npz')
 npzfile.files
