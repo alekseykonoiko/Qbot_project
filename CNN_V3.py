@@ -27,20 +27,17 @@ model_name = 'keras__trained_model.h5'
 
 #### Load Data ####
 
-npzfile = np.load('training_data.npz')
+npzfile = np.load('CNNs/training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
 y_train = npzfile['y_train']
 x_test = npzfile['x_test']
 y_test = npzfile['y_test']
-print (x_train.shape)
-print (y_train.shape)
-print (x_test.shape)
-print (y_test.shape)
+
 
 
 #### Hyperparameters ####
-batch_size = 32
+batch_size = 2
 num_classes = 6
 epochs = 200
 
@@ -61,41 +58,52 @@ initializer = keras.initializers.Orthogonal(gain=2, seed=True)
 #initializer = keras.initializers.he_uniform(seed=None)
 
 
-input1 = Input(shape=(32,32,288))
+input1 = Input(shape=(32,32,288,1))
 
-x = Conv2D(64, kernel_size=5, padding='same', activation='relu', kernel_initializer=initializer)(input1)
-#x = Conv2D(288, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-#x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+spatial = Conv3D(128, kernel_size=(3, 3, 288), padding='same', activation='relu')(input1)
+spectral = Conv3D(128, kernel_size=(1, 1, 288), padding='same', activation='relu')(input1)
 
-x = Conv2D(64, kernel_size=5, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
-#x = Conv2D(288, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+# concat = merge([UpSampling3D(size=(288, 1, 1))(spatial), spectral], mode='concat', concat_axis=1)
+concat = concatenate([spatial, spectral], axis=3)
 
-x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-#x = Conv2D(32, kernel_size=7, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-x = AveragePooling2D(pool_size=(2, 2))(x)
-x = Dropout(0.2)(x)
+l1 = Conv3D(128, kernel_size=(1, 1, 32), strides=(1, 1, 18), activation='relu')(concat)
+noise1 = GaussianNoise(0.01)(l1)
+l2 = Conv3D(128, kernel_size=(1, 1, 32), padding='same', activation='relu')(noise1)
+noise2 = GaussianNoise(0.01)(l2)
+l3 = Conv3D(128, kernel_size=(1, 1, 32), padding='same', activation='relu')(noise2)
+noise3 = GaussianNoise(0.005)(l3)
+add1 = add([l1, noise3])
 
-# x = Conv2D(64, kernel_size=3, padding='same' ,activation='relu', kernel_initializer=initializer)(x)
-# x = AveragePooling2D(pool_size=(2, 2))(x)
+l4 = Conv3D(128, kernel_size=(1, 1, 9), strides=(1, 1, 3), activation='relu')(add1)
+noise4 = GaussianNoise(0.005)(l4)
+l5 = Conv3D(128, kernel_size=(1, 1, 9), padding='same',activation='relu')(noise4)
+noise5 = GaussianNoise(0.005)(l5)
+l6 = Conv3D(128, kernel_size=(1, 1, 9), padding='same',activation='relu')(noise5)
+noise6 = GaussianNoise(0.005)(l6)
+add2 = add([l4, noise6])
+
+l7 = Conv3D(128, kernel_size=(1, 1, 3), activation='relu')(add2)
+noise7 = GaussianNoise(0.005)(l7)
+drop1 = SpatialDropout3D(0.2)(noise7)
+l8 = Conv3D(128, kernel_size=(1, 1, 3), activation='relu')(drop1)
+noise8 = GaussianNoise(0.005)(l8)
+drop2 = SpatialDropout3D(0.2)(noise8)
+l9 = Conv3D(128, kernel_size=(1, 1, 3), activation='relu')(drop2)
+noise9 =  GaussianNoise(0.01)(l9)
+
+
+flat = Flatten()(noise9)
+# x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
 # x = Dropout(0.2)(x)
-
-x = Flatten()(x)
-x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
-x = Dropout(0.2)(x)
-x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
-x = Dropout(0.2)(x)
-output = Dense(num_classes, activation='softmax')(x)
+# x = Dense(64, activation='relu', kernel_initializer=initializer)(x)
+# x = Dropout(0.2)(x)
+output = Dense(num_classes, activation='softmax')(flat)
 model = Model(inputs=input1, outputs=output)
+
 
 ## initiate RMSprop optimizer
 
-opt = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=1e-4)
+opt = keras.optimizers.RMSprop(lr=0.001, rho=0.9, epsilon=None, decay=5e-4)
 
 opt1 = keras.optimizers.Adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0, amsgrad=False)
 
@@ -118,7 +126,16 @@ x_train /= 100
 x_test /= 100
 
 print(model.summary()) # summarize layers
-#plot_model(model, to_file='Pictures/convolutional_neural_network.png') # plot graph of CNN structure
+plot_model(model, to_file='convolutional_neural_network.png') # plot graph of CNN structure
+
+x_train = x_train.reshape(840, 32, 32, 288, 1)
+# y_train = y_train.reshape(840, 6, 1, 1, 1)
+x_test = x_test.reshape(120, 32, 32, 288, 1)
+# y_test = y_test.reshape(120, 6, 1, 1, 1)
+print (x_train.shape)
+print (y_train.shape)
+print (x_test.shape)
+print (y_test.shape)
 
 #np.random.seed(seed)
 cnn = model.fit(x_train, y_train,
