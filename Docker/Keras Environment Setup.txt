@@ -1,0 +1,25 @@
+## install miniconda ##
+
+https://conda.io/miniconda.html
+
+## install tensoflow with python ##
+
+conda create -n tensorflow pip python=3.6
+
+conda activate tensorflow
+
+pip install --ignore-installed --upgrade tensorflow-gpu
+
+## install required python packages ##
+
+conda install -c conda-forge numpy scipy scikit-learn Pillow matplotlib h5py pydot graphviz
+
+conda install -c conda-forge h5py pydot
+
+## install keras ##
+
+pip install keras
+
+
+
+

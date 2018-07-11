@@ -22,10 +22,12 @@ from keras.utils import *
 from keras.models import *
 from keras.preprocessing.image import ImageDataGenerator
 
+from keras.callbacks import ModelCheckpoint
+
 save_dir = os.path.join(os.getcwd(), 'saved_models')
 model_name = 'keras__trained_model.h5'
 
-#### Load Data ####
+#### Load Data1 ####
 
 npzfile = np.load('CNNs/training_data.npz')
 npzfile.files
@@ -126,7 +128,7 @@ x_train /= 100
 x_test /= 100
 
 print(model.summary()) # summarize layers
-plot_model(model, to_file='convolutional_neural_network.png') # plot graph of CNN structure
+#plot_model(model, to_file='convolutional_neural_network.png') # plot graph of CNN structure
 
 x_train = x_train.reshape(840, 32, 32, 288, 1)
 # y_train = y_train.reshape(840, 6, 1, 1, 1)
@@ -136,6 +138,11 @@ print (x_train.shape)
 print (y_train.shape)
 print (x_test.shape)
 print (y_test.shape)
+
+# checkpoint
+filepath="weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
 
 #np.random.seed(seed)
 cnn = model.fit(x_train, y_train,
@@ -147,6 +154,8 @@ cnn = model.fit(x_train, y_train,
               validation_data=(x_test, y_test),
           
               verbose=1,
+
+              callbacks=callbacks_list,
 
               shuffle=True)
 
