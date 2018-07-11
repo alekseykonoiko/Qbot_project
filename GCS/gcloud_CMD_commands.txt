@@ -1,6 +1,14 @@
 ## Upload training data to Gcloud storage ##
 gsutil cp -r local/path/data.pickle gs://data/data.pickle
 
+## Connect server instance to SSH (in gcloud shell)##
+gcloud compute --project "qbot-209820" ssh --zone "us-central1-c" "instance-1"
+
+## Now commads can be executed in server instance though gcloud shell ##
+
+
+
+
 ## Commands set to run job ##
 export JOB_NAME="test_job" #update with jon label for each run
 export BUCKET_NAME=aleksey-konoiko-storage 
