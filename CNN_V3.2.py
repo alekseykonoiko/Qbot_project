@@ -23,11 +23,7 @@ from keras.models import *
 from keras.preprocessing.image import ImageDataGenerator
 
 from keras.callbacks import ModelCheckpoint
-
 from keras.callbacks import TensorBoard
-
-
-
 
 save_dir = os.path.join(os.getcwd(), 'saved_models')
 model_name = 'keras__trained_model.h5'
@@ -147,10 +143,10 @@ print (y_test.shape)
 # checkpoint
 filepath="weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
-callbacks_list = [checkpoint]
 
 #TensorBoard
-tensorboard = TensorBoard(log_dir='./logs')
+tensorflow = keras.callbacks.TensorBoard(log_dir='./logs')
+callbacks_list = [checkpoint, tensorflow]
 
 #np.random.seed(seed)
 cnn = model.fit(x_train, y_train,
@@ -163,7 +159,7 @@ cnn = model.fit(x_train, y_train,
           
               verbose=1,
 
-              callbacks=[callbacks_list,tensorboard],
+              callbacks=callbacks_list,
 
               shuffle=True)
 
