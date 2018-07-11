@@ -2,4 +2,4 @@ hyperspectral_images/
 training_data.npz
 .vscode/setting.json
 .vscode/
-Google Cloud/Qbot-0df66e9bd7bf.json
+GCS/Qbot-0df66e9bd7bf.json
