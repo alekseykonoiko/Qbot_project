@@ -32,6 +32,6 @@ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.li
   sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 sudo apt-get -y update
 sudo apt-get -y install nvidia-docker2
-sudo pkill -y -SIGHUP dockerd
+sudo pkill -SIGHUP dockerd
 
 
