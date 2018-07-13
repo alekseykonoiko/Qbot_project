@@ -4,7 +4,10 @@ All hyperspectral inages and training data excluded from this repository due to 
 Download them from OneDrive if don't have them.
 
 # Installation
-
+Login to GCS instance
+```
+gcloud compute ssh <your instance name>
+```
 Install essential Ubuntu packages
 ```
 sudo apt-get update
