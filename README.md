@@ -19,3 +19,8 @@ sudo apt-get install \
 ```
 curl https://raw.githubusercontent.com/alekseykonoiko/Qbot_project/master/GCS/install-gpu.sh | bash
 ```
+Run this command to check if nvidia-docker2 is running
+
+```
+sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+```
