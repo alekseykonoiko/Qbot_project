@@ -22,5 +22,9 @@ curl https://raw.githubusercontent.com/alekseykonoiko/Qbot_project/master/GCS/in
 Run this command to check if nvidia-docker2 is running
 
 ```
+sudo usermod -a -G docker $USER
+```
+
+```
 sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 ```
