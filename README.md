@@ -6,8 +6,7 @@ Download them from OneDrive if don't have them.
 # Installation
 Login to GCS instance
 ```
-gcloud compute ssh <your instance name>
-gcloud compute --project "qbot-209820" ssh --zone "us-west1-b" "qbot"
+gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"
 ```
 Install essential Ubuntu packages
 ```
