@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2018 Aleksey Konoiko
+Copyright (c) 2018 Aleksey Konoiko, Saiful Islam, Allan Kadhem
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
