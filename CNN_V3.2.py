@@ -77,7 +77,7 @@ l3 = Conv3D(128, kernel_size=(1, 1, 32), padding='same', activation='relu')(nois
 noise3 = GaussianNoise(0.005)(l3)
 add1 = add([l1, noise3])
 
-l4 = Conv3D(128, kernel_size=(1, 1, 9), strides=(1, 1, 3), activation='relu')(add1)
+l4 = Conv3D(128, kernel_size=(1, 1, 9), strides=(1, 1, 5), activation='relu')(add1)
 noise4 = GaussianNoise(0.005)(l4)
 l5 = Conv3D(128, kernel_size=(1, 1, 9), padding='same',activation='relu')(noise4)
 noise5 = GaussianNoise(0.005)(l5)
@@ -141,7 +141,7 @@ print (x_test.shape)
 print (y_test.shape)
 
 # checkpoint
-filepath="CNNs/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
+filepath="CNNs/logs/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
 #TensorBoard
