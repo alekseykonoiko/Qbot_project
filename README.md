@@ -57,7 +57,7 @@ Run this in SSH to mount bucket storage to bind mount "shared"
 
 `cd` to qbot folder
 
-`cd /shared/qbot`
+`cd shared/qbot`
 
 If permission problem encountered, switch to root bash mode
 
