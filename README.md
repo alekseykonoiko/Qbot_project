@@ -55,6 +55,14 @@ Run this in SSH to mount bucket storage to bind mount "shared"
 
 `gcsfuse <bucket_name> "$(pwd)"/shared`
 
+Resove docker permissions
+
+`sudo usermod -a -G docker $USER`
+
+Exit SSH (type `exit`) and log in again
+
+`gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
+
 `cd` to qbot folder
 
 `cd shared/qbot`
