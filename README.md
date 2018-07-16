@@ -48,15 +48,14 @@ Using GUI create folder `qbot` in bucket storage and upload this files to the fo
 Also create folder `logs` inside `qbot` 
 
 From SHH terminal create directory for `gcsfuse` mount
-```
-mkdir "$(pwd)"/shared
-gcsfuse <bucket-name> "$(pwd)"/shared
-```
+
+`mkdir "$(pwd)"/shared`
+
 Run this in SSH to mount bucket storage to bind mount "shared"
 
-`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+`gcsfuse <bucket_name> "$(pwd)"/shared`
 
-`cd` to /shared/qbot
+`cd` to qbot folder
 
 `cd /shared/qbot`
 
@@ -76,9 +75,20 @@ Build docker image
 
  `docker build -t qbot_docker .`
 
+After unmount and remove shared volume
+```
+cd
+sudo umount shared/
+sudo rm -r shared
+```
+
 Run docker container with bind mount "shared"
 
 `docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+
+Mount storage bucket again
+
+`gcsfuse <bucket_name> "$(pwd)"/shared`
 
 Now `cd` to shared directory in docker container
 

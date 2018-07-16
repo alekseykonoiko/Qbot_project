@@ -21,8 +21,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 
-save_dir = os.path.join(os.getcwd(), 'saved_models')
-model_name = 'keras__trained_model.h5'
+# save_dir = os.path.join(os.getcwd(), 'saved_models')
+# model_name = 'keras__trained_model.h5'
 
 #### Load Data1 ####
 
@@ -140,7 +140,7 @@ filepath="logs/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
 #TensorBoard
-tensorflow = keras.callbacks.TensorBoard(log_dir='/logs')
+tensorflow = keras.callbacks.TensorBoard(log_dir='logs')
 callbacks_list = [checkpoint, tensorflow]
 
 #np.random.seed(seed)
@@ -161,11 +161,12 @@ cnn = model.fit(x_train, y_train,
 
 #### Save model ####
 
-model_path = os.path.join(save_dir, model_name)
+model.save_weights('trained_model_weights.h5')
+# model_path = os.path.join(save_dir, model_name)
 
-model.save(model_path)
+# model.save(model_path)
 
-print('Saved trained model at %s ' % model_path)
+# print('Saved trained model at %s ' % model_path)
 
 #### Model testing ####
 scores = model.evaluate(x_test, y_test, verbose=1)
