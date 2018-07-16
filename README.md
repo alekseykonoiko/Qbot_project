@@ -4,11 +4,13 @@ All hyperspectral inages and training data excluded from this repository due to 
 Download them from OneDrive if don't have them.
 
 # Installation
-Login to GCS instance (put your project-id)
+Throughout install process replace all words wrapped by <....> with your own setting. Also try to follow my exact files and naming structure to avoid errors when executing commands.
+## Ubuntu system setup
+Login into GCS instance SSH terminal
 
-```gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"```
+`gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
-Install essential Ubuntu packages
+Run to install essential Ubuntu packages
 ```
 sudo apt-get update
 sudo apt-get install \
@@ -19,7 +21,7 @@ sudo apt-get install \
      software-properties-common
 ```
 
-Run automatic setup script (Nvidia cuda driver, Docker CE, nvidia-docker2)
+Run automatic setup script (instals: Nvidia cuda driver, Docker CE, nvidia-docker2)
 
 `curl https://raw.githubusercontent.com/alekseykonoiko/Qbot_project/master/GCS/install-gpu.sh | bash`
 
@@ -27,32 +29,121 @@ Run this command to check if nvidia-docker2 is running
 
 `sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi`
 
-Add persistent disk with `gcloud` tool
+Configure the Google Cloud firewall to allow your local client to connect to port 7007 on your VM.
 
-`gcloud compute disks create [DISK_NAME] --size 20GB --type pd-ssd` 
+`gcloud compute firewall-rules create tensorboard --allow tcp:7007`
+## Storage and Docker setup procedures
 
-Attach created persistance disk to running/stopped instance
+### Shared storage section
 
-`gcloud compute instances attach-disk [INSTANCE_NAME] --disk [DISK_NAME]`
+Create bucket storage in your GCS account, follow this tutorial
 
-df -h
-sudo lsblk
+`https://cloud.google.com/storage/docs/creating-buckets`
+
+Using GUI create folder `qbot` in bucket storage and upload this files to the folder:
+-   CNN_server.py
+-   Dockerfile
+-   training_data.npz
+
+Also create folder `logs` inside `qbot` 
+
+From SHH terminal create directory for `gcsfuse` mount
+```
+mkdir "$(pwd)"/shared
+gcsfuse <bucket-name> "$(pwd)"/shared
+```
+Run this in SSH to mount bucket storage to bind mount "shared"
+
+`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+
+`cd` to /shared/qbot
+
+`cd /shared/qbot`
+
+If permission problem encountered, switch to root bash mode
+
+`sudo -i`
+
+Now `cd` again
+
+`cd "$(pwd)"/shared/qbot`
+
+Run `ls` to verify that all the files including `Dockerfile` are in the folder
+
+### Docker section
+
+Build docker image
+
+ `docker build -t qbot_docker .`
+
+Run docker container with bind mount "shared"
+
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+
+Now `cd` to shared directory in docker container
+
+`cd shared/qbot`
+
+Run python script
+
+`python3 <scipt-name>.py`
+
+From now you can use Google Cloud Storage GUI to upload new scripts for training and execute them with `python3` as described above
+
+
+
+## Useful commands
+
+### Bucket storage
 
 Upload file to GCS bucket storage
 
-`gsutil cp Desktop/kitten.png gs://my-awesome-bucket`
+`gsutil cp Desktop/image.png gs://bucket-name`
 
 Download an object from your bucket
 
-`gsutil cp gs://my-awesome-bucket/kitten.png Desktop/kitten2.png`
+`gsutil cp gs://my-bucket/image.png Desktop/image.png`
 
 Copy an object to a folder in the bucket
 
-`gsutil cp gs://my-awesome-bucket/kitten.png gs://my-awesome-bucket/just-a-folder/kitten3.png`
+`gsutil cp gs://my-bucket/image.png gs://my-bucket/just-a-folder/image.png`
 
 List the contents at the top level of your bucket:
 
-`gsutil ls gs://my-awesome-bucket`
+`gsutil ls gs://my-bucket`
 
+### Docker
+List all active containers (including stopped)
+
+`docker ps -a`
+
+Start stopped container
+
+`docker exec -it qbot_container bash`
+
+Print info about container
+
+`docker inspect qbot_container`
+
+Remove stopped docker container
+
+`docker rm -f qbot_container`
+
+### Bash in SSH
+Remove directory in bash run
+
+`rm -r <dir-name>`
+
+Login to root bash terminal
+
+`sudo -i`
+
+Path to current directory
+
+`pwd`
+
+List current directory contents
+
+`ls`
 
 

@@ -1,85 +1,93 @@
 
 ARG cuda_version=9.0
-ARG cudnn_version=7.0
+ARG cudnn_version=7
+ARG ubuntu_version=16.04
+ARG TENSORFLOW_VERSION=0.12.1
+ARG TENSORFLOW_ARCH=gpu
+ARG KERAS_VERSION=1.2.0
 
-FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
+FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel-ubuntu${ubuntu_version}
 
-
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 
 # Install system packages
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      bzip2 \
-      g++ \
-      git \
-      libgl1-mesa-glx \
-      libhdf5-dev \
-      openmpi-bin \
-      wget && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get -y install \
+      	bc \
+		build-essential \
+		cmake \
+		curl \
+		g++ \
+		git \
+		libffi-dev \
+		libfreetype6-dev \
+		libhdf5-dev \
+		libjpeg-dev \
+		pkg-config \
+		python3-dev \
+		software-properties-common \
+		unzip \
+		vim \
+		wget \
+		zlib1g-dev \
+		qt5-default \
+		libvtk6-dev \
+		zlib1g-dev \
+		libjpeg-dev \
+		libwebp-dev \
+		libpng-dev \
+		python3-dev \
+		python3-tk \
+		python3-numpy \
+		&& \
+      apt-get clean && \
+	apt-get autoremove && \
+	rm -rf /var/lib/apt/lists/* 
 
+# Install pip
+# RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
+# 	python get-pip.py && \
+# 	rm get-pip.py
 
-# Install conda
-ENV CONDA_DIR /opt/conda
-ENV PATH $CONDA_DIR/bin:$PATH
+RUN curl -O https://bootstrap.pypa.io/get-pip.py && \
+	python3 get-pip.py && \
+	rm get-pip.py
+# Add SNI support to Python
+# RUN pip3 --no-cache-dir install \
+# 		pyopenssl \
+# 		ndg-httpsclient \
+# 		pyasn1
 
-RUN wget --quiet --no-check-certificate https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh && \
-    echo "c59b3dd3cad550ac7596e0d599b91e75d88826db132e4146030ef471bb434e9a *Miniconda3-4.2.12-Linux-x86_64.sh" | sha256sum -c - && \
-    /bin/bash /Miniconda3-4.2.12-Linux-x86_64.sh -f -b -p $CONDA_DIR && \
-    rm Miniconda3-4.2.12-Linux-x86_64.sh && \
-    echo export PATH=$CONDA_DIR/bin:'$PATH' > /etc/profile.d/conda.sh
+# Install useful Python packages using apt-get to avoid version incompatibilities with Tensorflow binary
+# especially numpy, scipy, skimage and sklearn (see https://github.com/tensorflow/tensorflow/issues/2034)
+RUN apt-get update && apt-get install -y \
+		python3-numpy \
+		python3-scipy \
+		python3-nose \
+		python3-h5py \
+		python3-matplotlib \
+		python3-sklearn \
+		&& \
+	apt-get clean && \
+	apt-get autoremove && \
+	rm -rf /var/lib/apt/lists/*
 
+# Install other useful Python packages using pip
+RUN pip3 --no-cache-dir install \
+		Cython \
+		path.py \
+		Pillow \
+		wheel
 
-# Install Python packages and keras
+# Install TensorFlow
+RUN pip3 --no-cache-dir install --upgrade tensorflow-gpu
 
-ENV NB_USER keras
-ENV NB_UID 1000
+# Install Keras
+RUN pip3 --no-cache-dir install keras
 
-RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
-    chown $NB_USER $CONDA_DIR -R && \
-    mkdir -p /src && \
-    chown $NB_USER /src
+# Expose Ports for TensorBoard (6006), Ipython (8888)
+EXPOSE 6006
 
-USER $NB_USER
-
-
-#choose python version
-ARG python_version=3.6 
-
-#install required packages with conda
-RUN conda install -y python=${python_version} && \
-    pip install --upgrade pip && \
-    pip install \
-      tensorflow-gpu && \
-    conda install -c conda-forge \
-      numpy \
-      scipy \
-      scikit-learn \
-      Pillow \
-      matplotlib \
-      h5py \
-      pydot \
-      graphviz && \
-    git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
-    pip install git+git://github.com/keras-team/keras.git && \
-    conda clean -yt
-
-
-
-ADD theanorc /home/keras/.theanorc
-
-
-
-ENV PYTHONPATH='/src/:$PYTHONPATH'
-
-
-
-WORKDIR /src
-
-
-
-EXPOSE 8888
-
-
-
-CMD jupyter notebook --port=8888 --ip=0.0.0.0
+WORKDIR "/root"
+CMD ["/bin/bash"]
