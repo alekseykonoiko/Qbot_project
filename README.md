@@ -96,7 +96,11 @@ Run docker container with bind mount "shared"
 
 Mount storage bucket again in second SSH terminal
 
-`gcsfuse <bucket_name> "$(pwd)"/shared`
+`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+
+Exit docker (type `exit`) container and run again
+
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
 Now `cd` to shared directory in docker container
 
