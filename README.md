@@ -94,7 +94,7 @@ Run docker container with bind mount "shared"
 
 `docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
-Mount storage bucket again
+Mount storage bucket again in second SSH terminal
 
 `gcsfuse <bucket_name> "$(pwd)"/shared`
 
