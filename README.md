@@ -112,7 +112,21 @@ Run python script
 
 From now you can use Google Cloud Storage GUI to upload new scripts for training and execute them with `python3` as described above
 
+### Cycle of stopping instance and restarting when not used
 
+Open two SSH terminals and run docker container in the first ternimal
+
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+
+On second terminal mount bucket storage again (it unmounts when VM instance stops)
+
+`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+
+Now exit docker (type `exit`) container and run again
+
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+
+Now file system ready for work, `cd` to qbot folder as before and proceed with training
 
 ## Useful commands
 
