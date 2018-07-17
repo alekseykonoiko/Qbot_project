@@ -4,9 +4,9 @@ All hyperspectral inages and training data excluded from this repository due to 
 Download them from OneDrive if don't have them.
 
 # Installation
-Throughout install process replace all words wrapped by <....> with your own setting. Also try to follow my exact files and naming structure to avoid errors when executing commands.
+Throughout installation process replace all words wrapped by <....> with your own setting. Also try to follow my exact files and naming structure to avoid errors when executing commands.
 ## Ubuntu system setup
-Login into GCS instance SSH terminal
+Login into Google Cloud Services (GCS) instance SSH terminal
 
 `gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
