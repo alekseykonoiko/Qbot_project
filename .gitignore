@@ -1,5 +1,6 @@
 hyperspectral_images/
 training_data.npz
+training_data-no_norm.npz
 .vscode/setting.json
 .vscode/
 GCS/Qbot-0df66e9bd7bf.json
