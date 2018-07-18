@@ -106,7 +106,7 @@ sudo rm -r shared
 
 Run docker container with bind mount "shared"
 
-`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
 Mount storage bucket again in second SSH terminal
 
@@ -114,7 +114,7 @@ Mount storage bucket again in second SSH terminal
 
 Exit docker (type `exit`) container and run again
 
-`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
 Now `cd` to shared directory in docker container
 
@@ -128,19 +128,25 @@ From now you can use Google Cloud Storage GUI to upload new scripts for training
 
 ### Cycle of stopping instance and restarting when not used
 
-Open two SSH terminals and run docker container in the first ternimal
-
-`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
-
-On second terminal mount bucket storage again (it unmounts when VM instance stops)
+In SSH terminal mount bucket storage again (it unmounts when VM instance stops)
 
 `sudo gcsfuse <bucket_name> "$(pwd)"/shared`
 
-Now exit docker (type `exit`) container and run again
+Then tun docker container again
 
-`docker run --runtime=nvidia --rm -it --name qbot_container -p 7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
+`docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
 Now file system ready for work, `cd` to qbot folder as before and proceed with training
+
+### Connect to tensorboard
+
+In docker container cd to `logs` folder and run
+
+tensorboard --logdir ./ --host 0.0.0.0 --port 6006
+
+Now note your VM instance exernal ip (you can find it in details about qbot instance in GCS GUI). Then enter following address in browser
+
+http://<external_ip>:7007
 
 ## Useful commands and tools
 
