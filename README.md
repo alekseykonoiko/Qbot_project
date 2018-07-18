@@ -142,7 +142,7 @@ Now file system ready for work, `cd` to qbot folder as before and proceed with t
 
 In docker container cd to `logs` folder and run
 
-tensorboard --logdir ./ --host 0.0.0.0 --port 6006
+`tensorboard --logdir ./ --host 0.0.0.0 --port 6006`
 
 Now note your VM instance exernal ip (you can find it in details about qbot instance in GCS GUI). Then enter following address in browser
 
