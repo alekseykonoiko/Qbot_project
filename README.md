@@ -146,15 +146,15 @@ Now file system ready for work, `cd` to qbot folder as before and proceed with t
 
 ### VIM editor
 
-To open file in editor type
+To open file in editor enter
 
 `vim <filename>`
 
-In editor there are two modes `INSERT` mode and default mode (vim loades in default mode). `INSERT` mode allows you to edit file and default mode allows to enter commands like save or quite.
+There are two modes in vim editor: `INSERT` mode and default mode (vim loades in default mode). `INSERT` mode allows you to edit the file and default mode allows to enter commands like save or quite.
 
 To enter `INSERT` mode you should press `Shift + I` to exit press `Esc`
  
-To save file and exit vim editor, in default mode press `Shift + :` and type `x` and press `Enter`
+To save file and exit vim editor, in default mode press `Shift + :` then enter `x` and press `Enter`
 
 ### Bucket storage
 
