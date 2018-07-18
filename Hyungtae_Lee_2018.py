@@ -27,7 +27,7 @@ from keras.callbacks import TensorBoard
 
 #### Load Data1 ####
 
-npzfile = np.load('training_data_no_norm.npz')
+npzfile = np.load('training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
 y_train = npzfile['y_train']

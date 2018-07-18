@@ -3,6 +3,18 @@ CNN for classification and quantification of water content in different substanc
 All hyperspectral inages and training data excluded from this repository due to large files sizes. 
 Download them from OneDrive if don't have them.
 
+# Virtual Machine (VM) Instance Creation Setup
+Create an instance in Compute Engine with the following settings:
+Region: us-west1 (or any other region with GPU based servers
+Machine Type: 4 vCPU
+Number of GPU: 1 (or any available)
+GPU Type: Nvidia Tesla K80 (or better)
+Boot disk: Ubutu 16.04 LTS
+Boot disk type: SSD
+Size: 20 GB (or more)
+Access scopes: Allow full access to all Cloud APIs
+Firewall: Allow HTTP traffic, Allow HTTPS
+
 # Installation
 Throughout installation process replace all words wrapped by <....> with your own setting. Also try to follow my exact files and naming structure to avoid errors when executing commands.
 ## Ubuntu system setup
@@ -10,15 +22,17 @@ Login into Google Cloud Services (GCS) instance SSH terminal
 
 `gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
+In case of login error, click on the arrow next to SSH and View gcloud command 
+
 Run to install essential Ubuntu packages
 ```
-sudo apt-get update
-sudo apt-get install \
+`sudo apt-get update
+ sudo apt-get install \
      apt-transport-https \
      ca-certificates \
      curl \
      gnupg2 \
-     software-properties-common
+     software-properties-common`
 ```
 
 Run automatic setup script (instals: Nvidia cuda driver, Docker CE, nvidia-docker2)
@@ -63,7 +77,7 @@ Exit SSH (type `exit`) and log in again
 
 `gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
-`cd` to qbot folder
+Current directory to qbot folder
 
 `cd shared/qbot`
 
@@ -108,7 +122,7 @@ Now `cd` to shared directory in docker container
 
 Run python script
 
-`python3 <scipt-name>.py`
+`python3 <script-name>.py`
 
 From now you can use Google Cloud Storage GUI to upload new scripts for training and execute them with `python3` as described above
 
