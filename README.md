@@ -85,13 +85,6 @@ Build docker image
 
  `docker build -t qbot_docker .`
 
-After unmount and remove shared volume
-```
-cd
-sudo umount shared/
-sudo rm -r shared
-```
-
 Run docker container with bind mount "shared"
 
 `docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
