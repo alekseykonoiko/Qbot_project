@@ -67,15 +67,11 @@ From SHH terminal create directory for `gcsfuse` mount
 
 Run this in SSH to mount bucket storage to bind mount "shared"
 
-`gcsfuse <bucket_name> "$(pwd)"/shared`
+`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
 
 Resove docker permissions
 
 `sudo usermod -a -G docker $USER`
-
-Run docker container in SSH
-
-`gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
 `cd` to qbot `dir`
 
@@ -84,10 +80,6 @@ Run docker container in SSH
 Run `ls` to verify that all the files including `Dockerfile` are in the folder
 
 ### Docker section
-
-Mount storage bucket
-
-`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
 
 Build docker image
 
