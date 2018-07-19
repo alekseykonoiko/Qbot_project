@@ -67,7 +67,7 @@ From SHH terminal create directory for `gcsfuse` mount
 
 Run this in SSH to mount bucket storage to bind mount "shared"
 
-`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+`gcsfuse <bucket_name> "$(pwd)"/shared`
 
 Resove docker permissions
 
