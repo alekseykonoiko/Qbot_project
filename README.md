@@ -26,13 +26,13 @@ In case of login error, click on the arrow next to SSH and View gcloud command
 
 Run to install essential Ubuntu packages
 ```
-`sudo apt-get update
- sudo apt-get install \
+sudo apt-get update
+sudo apt-get install \
      apt-transport-https \
      ca-certificates \
      curl \
      gnupg2 \
-     software-properties-common`
+     software-properties-common
 ```
 
 Run automatic setup script (instals: Nvidia cuda driver, Docker CE, nvidia-docker2)
@@ -43,7 +43,7 @@ Run this command to check if nvidia-docker2 is running
 
 `sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi`
 
-Configure the Google Cloud firewall to allow your local client to connect to port 7007 on your VM.
+Configure the Google Cloud firewall to allow your local client to connect to port 7007 on your VM (don't run this if it was used before).
 
 `gcloud compute firewall-rules create tensorboard --allow tcp:7007`
 ## Storage and Docker setup procedures
@@ -73,19 +73,11 @@ Resove docker permissions
 
 `sudo usermod -a -G docker $USER`
 
-Exit SSH (type `exit`) and log in again
+Run docker container in SSH
 
 `gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
 
-Current directory to qbot folder
-
-`cd shared/qbot`
-
-If permission problem encountered, switch to root bash mode
-
-`sudo -i`
-
-Now `cd` again
+`cd` to qbot `dir`
 
 `cd "$(pwd)"/shared/qbot`
 
@@ -197,10 +189,6 @@ Remove stopped docker container
 Remove directory in bash run
 
 `rm -r <dir-name>`
-
-Login to root bash terminal
-
-`sudo -i`
 
 Path to current directory
 
