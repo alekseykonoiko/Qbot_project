@@ -73,6 +73,10 @@ Resove docker permissions
 
 `sudo usermod -a -G docker $USER`
 
+Exit (type `exit`) your SSH and login again
+
+`gcloud compute --project "<project-id>" ssh --zone "us-west1-b" "qbot"`
+
 `cd` to qbot `dir`
 
 `cd "$(pwd)"/shared/qbot`
