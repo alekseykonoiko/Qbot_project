@@ -93,6 +93,10 @@ Run `ls` to verify that all the files including `Dockerfile` are in the folder
 
 ### Docker section
 
+Mount storage bucket
+
+`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
+
 Build docker image
 
  `docker build -t qbot_docker .`
@@ -105,14 +109,6 @@ sudo rm -r shared
 ```
 
 Run docker container with bind mount "shared"
-
-`docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
-
-Mount storage bucket again in second SSH terminal
-
-`sudo gcsfuse <bucket_name> "$(pwd)"/shared`
-
-Exit docker (type `exit`) container and run again
 
 `docker run --runtime=nvidia --rm -it --name qbot_container -p 0.0.0.0:7007:6006 -v "$(pwd)"/shared:/root/shared qbot_docker bash`
 
