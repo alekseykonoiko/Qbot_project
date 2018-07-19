@@ -132,12 +132,26 @@ Then tun docker container again
 Now file system ready for work, `cd` to qbot folder as before and proceed with training
 
 ### Connect to tensorboard
+#### Real time tensorboard
 
-In docker container cd to `logs` folder and run
+Run second SSH terminal and login to running docker container 
+
+`docker exec -it qbot_container bash`
+
+In docker container `cd` to `shared/qbot/logs/` folder and run
 
 `tensorboard --logdir ./ --host 0.0.0.0 --port 6006`
 
 Now note your VM instance exernal ip (you can find it in details about qbot instance in GCS GUI). Then enter following address in browser
+
+http://<external_ip>:7007
+
+## After training tensorboard 
+`cd` to `shared/qbot/logs/
+
+`tensorboard --logdir ./ --host 0.0.0.0 --port 6006`
+
+Open in browser
 
 http://<external_ip>:7007
 
