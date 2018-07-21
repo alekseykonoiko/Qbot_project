@@ -21,11 +21,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 
-# save_dir = os.path.join(os.getcwd(), 'saved_models')
-# model_name = 'keras__trained_model.h5'
-
 #### Load Data1 ####
-
+#Indian Pines
 npzfile = np.load('training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
@@ -33,11 +30,13 @@ y_train = npzfile['y_train']
 x_test = npzfile['x_test']
 y_test = npzfile['y_test']
 
+#Pavia University
+
 
 
 #### Hyperparameters ####
-batch_size = 4
-num_classes = 6
+batch_size = 10
+num_classes = 8
 epochs = 1
 
 #### CNN structure (Functional API Model Style) ####
@@ -149,7 +148,7 @@ cnn = model.fit(x_train, y_train,
 
 #### Save model ####
 
-model.save_weights('trained_model_weights.h5')
+model.save_weights('H_K_2016_trained_model_weights.h5')
 # model_path = os.path.join(save_dir, model_name)
 
 # model.save(model_path)
