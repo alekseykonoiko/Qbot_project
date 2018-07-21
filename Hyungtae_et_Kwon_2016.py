@@ -22,7 +22,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 
 #### Load Data1 ####
-#Indian Pines
+
 npzfile = np.load('training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
@@ -30,9 +30,9 @@ y_train = npzfile['y_train']
 x_test = npzfile['x_test']
 y_test = npzfile['y_test']
 
+#Indian Pines
+
 #Pavia University
-
-
 
 #### Hyperparameters ####
 batch_size = 10
