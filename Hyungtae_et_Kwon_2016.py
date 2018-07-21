@@ -34,6 +34,13 @@ y_test = npzfile['y_test']
 
 #Pavia University
 
+
+# Data Parameters
+# h= height 
+# w= width
+# d= depth
+# s= number of samples
+
 #### Hyperparameters ####
 batch_size = 10
 num_classes = 8
