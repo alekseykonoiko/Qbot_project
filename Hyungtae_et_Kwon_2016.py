@@ -113,9 +113,9 @@ x_test = x_test.astype('float32')
 
 print(model.summary()) # summarize layers
 
-x_train = x_train.reshape(840, 288, 32, 32)
+x_train = x_train.reshape(840, 32, 32, 288)
 # y_train = y_train.reshape(840, 6, 1, 1, 1)
-x_test = x_test.reshape(120, 288, 32, 32)
+x_test = x_test.reshape(120, 32, 32, 288)
 # y_test = y_test.reshape(120, 6, 1, 1, 1)
 print (x_train.shape)
 print (y_train.shape)
