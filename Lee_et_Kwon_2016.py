@@ -1,4 +1,5 @@
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1' #Comment to Enable GPU, disable CUDA cores 
 import numpy as np
 from numpy.random import seed #fix random seed for reproducibility (numpy)
 seed(1)
@@ -42,8 +43,8 @@ y_test = npzfile['y_test']
 # s= number of samples
 
 #### Hyperparameters ####
-batch_size = 10
-num_classes = 8
+batch_size = 6
+num_classes = 6
 epochs = 1
 
 #### CNN structure (Functional API Model Style) ####
@@ -92,7 +93,7 @@ drop2 = SpatialDropout2D(0.2)(l8)
 l9 = Conv2D(128, kernel_size=(1, 1), activation='relu')(drop2)
 
 flat = Flatten()(l9)
-output = Dense(num_classes, activation='softmax')(flat)
+output = Dense(6, activation='softmax')(flat)
 model = Model(inputs=input1, outputs=output)
 
 ## initiate RMSprop optimizer
