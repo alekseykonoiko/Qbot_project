@@ -1,6 +1,6 @@
 # Qbot_project
 CNN for classification and quantification of water content in different substances. 
-All hyperspectral inages and training data excluded from this repository due to large files sizes. 
+All hyperspectral images and training data excluded from this repository due to large files sizes. 
 Download them from OneDrive if don't have them.
 
 # Virtual Machine (VM) Instance Creation Setup
@@ -35,7 +35,7 @@ sudo apt-get install \
      software-properties-common
 ```
 
-Run automatic setup script (instals: Nvidia cuda driver, Docker CE, nvidia-docker2)
+Run automatic setup script (installs: Nvidia cuda driver, Docker CE, nvidia-docker2)
 
 `curl https://raw.githubusercontent.com/alekseykonoiko/Qbot_project/master/GCS/install-gpu.sh | bash`
 
