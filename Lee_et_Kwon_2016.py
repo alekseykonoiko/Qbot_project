@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1' #Comment to Enable GPU, disable CUDA cores 
+#os.environ['CUDA_VISIBLE_DEVICES'] = '-1' #Comment to Enable GPU, disable CUDA cores 
 import numpy as np
 from numpy.random import seed #fix random seed for reproducibility (numpy)
 seed(1)
@@ -23,7 +23,6 @@ from keras.callbacks import ModelCheckpoint
 from keras.callbacks import TensorBoard
 
 #### Load Data1 ####
-
 npzfile = np.load('training_data.npz')
 npzfile.files
 x_train = npzfile['x_train']
@@ -31,31 +30,35 @@ y_train = npzfile['y_train']
 x_test = npzfile['x_test']
 y_test = npzfile['y_test']
 
-#Indian Pines
+## Scale 0-255 bands range into float 0-1
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
+x_train /= 100
+x_test /= 100
 
-#Pavia University
-
-
-# Data Parameters
-# h= height 
-# w= width
-# d= depth
-# s= number of samples
+x_train = x_train.reshape(840, 32, 32, 288)
+# y_train = y_train.reshape(840, 6, 1, 1, 1)
+x_test = x_test.reshape(120, 32, 32, 288)
+# y_test = y_test.reshape(120, 6, 1, 1, 1)
+print ('x_train shape:', x_train.shape)
+print ('x_test shape:', x_test.shape)
+print ('y_train shape:', y_train.shape)
+print ('y_test shape:', y_test.shape)
 
 #### Hyperparameters ####
-batch_size = 6
+batch_size = 3
 num_classes = 6
-epochs = 1
+epochs = 1000
 
 #### CNN structure (Functional API Model Style) ####
 
 ## Uncomment initializer to be used 
 #initializer = keras.initializers.Ones()
-initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005, seed=True)
+#initializer = keras.initializers.RandomNormal(mean=0.0, stddev=0.005, seed=True)
 #initializer = keras.initializers.RandomUniform(minval=-0.05, maxval=0.05, seed=seed)
 #initializer = keras.initializers.TruncatedNormal(mean=0.0, stddev=0.05, seed=None)
 #initializer = keras.initializers.VarianceScaling(scale=1.0, mode='fan_in', distribution='normal', seed=None)
-#initializer = keras.initializers.Orthogonal(gain=2, seed=True)
+initializer = keras.initializers.Orthogonal(gain=2, seed=True)
 #initializer = keras.initializers.lecun_uniform(seed=True)
 #initializer = keras.initializers.glorot_normal(seed=None)
 #initializer = keras.initializers.glorot_uniform(seed=None)
@@ -111,31 +114,13 @@ model.compile(loss='categorical_crossentropy',
               optimizer=opt2, 
               
               metrics=['accuracy'])
-## Scale 0-255 bands range into float 0-1
-x_train = x_train.astype('float32')
-
-x_test = x_test.astype('float32')
-
-#x_train /= 100
-#x_test /= 100
-
-print(model.summary()) # summarize layers
-
-x_train = x_train.reshape(840, 32, 32, 288)
-# y_train = y_train.reshape(840, 6, 1, 1, 1)
-x_test = x_test.reshape(120, 32, 32, 288)
-# y_test = y_test.reshape(120, 6, 1, 1, 1)
-print (x_train.shape)
-print (y_train.shape)
-print (x_test.shape)
-print (y_test.shape)
 
 # checkpoint
 filepath="logs/weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
 
 #TensorBoard
-tensorflow = keras.callbacks.TensorBoard(log_dir='logs')
+tensorflow = keras.callbacks.TensorBoard(log_dir='logs', histogram_freq=0, batch_size=32, write_graph=True, update_freq='epoch')
 callbacks_list = [checkpoint, tensorflow]
 
 #np.random.seed(seed)
